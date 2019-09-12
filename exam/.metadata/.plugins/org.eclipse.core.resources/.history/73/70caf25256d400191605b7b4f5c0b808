@@ -1,0 +1,32 @@
+package com.datageeks;
+
+import java.util.List;
+
+import javax.persistence.TypedQuery;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+public class ProductDAO {
+
+	SessionFactory sessionFactory = HBUtil.getSessionFactory();
+	public List<ProductBean> getAll(){
+		List<ProductBean> productList = null;
+		String hql = "select p from ProductBean as p";
+		
+		Session session = sessionFactory.openSession();
+		TypedQuery<ProductBean> query = session.createQuery(hql,ProductBean.class);
+		return productList = query.getResultList();
+	}
+	
+	public List<ProductBean> getIdNames(){
+		List<Object[]> objectArrayList = null;
+		String hql = "select p.productId,p.productName from PrdocutBean as p";
+		
+		Session session = sessionFactory.openSession();
+		TypedQuery<Object[]> query = session.createQuery(hql,Object[].class);
+		objectArrayList = query.getResultList();
+		
+		return objectArrayList;
+	}
+}

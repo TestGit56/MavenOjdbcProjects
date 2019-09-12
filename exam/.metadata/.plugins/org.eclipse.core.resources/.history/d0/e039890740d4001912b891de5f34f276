@@ -1,0 +1,30 @@
+package com.datageeks;
+
+public class ContractEmployee  extends Employee{
+
+	private Float payPerHour = null;
+	private String contractPeriod = null;
+	public ContractEmployee() {
+		super();
+	}
+	public ContractEmployee(Integer empId, String empName, Float payPerHour, String contractPeriod) {
+		setEmpId(empId);
+		setEmpName(empName);
+		this.payPerHour = payPerHour;
+		this.contractPeriod = contractPeriod;
+	}
+	public void setPayPerHour(Float payPerHour) {
+		this.payPerHour = payPerHour;
+	}
+	public void setContractPeriod(String contractPeriod) {
+		this.contractPeriod = contractPeriod;
+	}
+	public Float getPayPerHour() {
+		return payPerHour;
+	}
+	public String getContractPeriod() {
+		return contractPeriod;
+	}
+	
+	
+}

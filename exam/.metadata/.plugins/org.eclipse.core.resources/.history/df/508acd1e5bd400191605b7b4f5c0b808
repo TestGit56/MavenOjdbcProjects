@@ -1,0 +1,64 @@
+package com.datageeks;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.TypedQuery;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+public class ProductDAO {
+
+	SessionFactory sessionFactory = HBUtil.getSessionFactory();
+	public List<ProductBean> getAll(){
+		List<ProductBean> productList = null;
+		String hql = "select p from ProductBean as p";
+		
+		Session session = sessionFactory.openSession();
+		TypedQuery<ProductBean> query = session.createQuery(hql,ProductBean.class);
+		return productList = query.getResultList();
+	}
+	
+	public List<Object[]> getIdNames(){
+		List<Object[]> objectArrayList = null;
+		String hql = "select p.productId,p.productName from ProduutBean as p";
+		
+		Session session = sessionFactory.openSession();
+		TypedQuery<Object[]> query = session.createQuery(hql,Object[].class);
+		objectArrayList = query.getResultList();
+		
+		return objectArrayList;
+	}
+	public List<ProductBean> getById(Integer productId){
+		List<ProductBean> productList = null;
+		String hql = "select p from ProductBean as p where p.productId = :id";
+		
+		Session session = sessionFactory.openSession();
+		TypedQuery<ProductBean> query = session.createQuery(hql,ProductBean.class);
+		query.setParameter("id", productId);
+		productList = query.getResultList();
+		
+		return productList;
+	}
+	
+	public List<SearchCriteriaBean> getIdNameRealTime(){
+		List<SearchCriteriaBean> searchList = new ArrayList<SearchCriteriaBean>();
+		
+		List<Object[]> objectArrayList = null;
+		String hql = "select p.productId,p.productName from ProductBean as p";
+		
+		Session session = sessionFactory.openSession();
+		TypedQuery<Object[]> query = session.createQuery(hql,Object[].class);
+		objectArrayList = query.getResultList();
+		
+		for(Object[] objectArray : objectArrayList)
+		{
+			SearchCriteriaBean searchBean = new SearchCriteriaBean();
+			searchBean.setProductId((Integer)objectArray[0]);
+			searchBean.setProductName((String)objectArray[1]);
+			searchList.add(searchBean);
+		}
+		return searchList;
+	}
+}

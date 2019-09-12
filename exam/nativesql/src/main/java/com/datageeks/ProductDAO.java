@@ -1,0 +1,119 @@
+package com.datageeks;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.FloatType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
+
+public class ProductDAO {
+
+	SessionFactory sessionFactory = HBUtil.getSessionFactory();
+	
+	public ProductBean getById(Integer productId) {
+		ProductBean product = null;
+		Session session = sessionFactory.openSession();
+		NativeQuery<ProductBean> query = session.createNativeQuery("select * from product where PID = :id", ProductBean.class);
+		query.setParameter("id", productId);
+		product = query.getSingleResult();
+		return product;
+	}
+	
+	public List<ProductBean> search(String productName) {
+		List<ProductBean> productList = null;
+		
+		Session session = sessionFactory.openSession();
+		NativeQuery<ProductBean> query = session.createNativeQuery("select * from product where upper(PNAME)  like :name", ProductBean.class);
+		query.setParameter("name", "%" + productName.trim().toUpperCase() + "%");
+		productList = query.getResultList();
+		
+		return productList;
+	}
+	
+	public Float getMaxPrice() {
+		Float maxprice = null;
+		
+		Session session = sessionFactory.openSession();
+		NativeQuery<Float> query = session.createNativeQuery("select max(PRICE)maxprice from product");
+		query.addScalar("maxprice",FloatType.INSTANCE);
+		maxprice = query.getSingleResult();
+		
+		return maxprice;
+	}
+	
+	public List<ProductBean> getAll(){
+		List<ProductBean> productList = null;
+		
+		Session session = sessionFactory.openSession();
+		NativeQuery<ProductBean> query = session.createNativeQuery("select * from product", ProductBean.class);
+		productList = query.getResultList();
+		
+		return productList;
+	}
+	
+	public List<SearchCriteriaBean> getIdNamesRealTIme(){
+		List<SearchCriteriaBean> searchList = new ArrayList<SearchCriteriaBean>();
+		
+		List<Object[]> objectArrayList = null;
+		Session session = sessionFactory.openSession();
+		NativeQuery<Object[]> query = session.createNativeQuery("select PID,PNAME from product");
+		query.addScalar("PID", IntegerType.INSTANCE);
+		query.addScalar("PNAME", StringType.INSTANCE);
+		
+		objectArrayList = query.getResultList();
+		
+		for(Object[] objectArray : objectArrayList)
+		{
+			SearchCriteriaBean search = new SearchCriteriaBean();
+			search.setProductId((Integer)objectArray[0]);
+			search.setProductName((String)objectArray[1]);
+			
+			searchList.add(search);
+		}
+		return searchList;
+		
+	}
+	
+	public List<ProductBean> pagination(){
+		List<ProductBean> product = null;
+		
+		Session session = sessionFactory.openSession();
+		NativeQuery<ProductBean> query = session.createNativeQuery("select * from product",ProductBean.class);
+		query.setFirstResult(2);
+		query.setMaxResults(3);
+		product = query.getResultList();
+		
+		return product;
+	}
+	
+	public Integer updatePrice() {
+		Integer count =0;
+		
+		Session session = sessionFactory.openSession();
+		NativeQuery query = session.createNativeQuery("update product set PRICE = :maxPrice where PRICE <= :minPrice");
+		query.setParameter("maxPrice", 7000f);
+		query.setParameter("minPrice", 5500f);
+		session.beginTransaction();
+		count = query.executeUpdate();
+		session.getTransaction().commit();
+		
+		return count;
+	}
+	
+	public Integer deleteById(Integer productId){
+		int count = 0;
+		
+		Session session = sessionFactory.openSession();
+		NativeQuery<ProductBean> query = session.createNativeQuery("Delete From Product where PID = :id");
+		query.setParameter("id", productId);
+		session.beginTransaction();
+		count = query.executeUpdate();
+		session.getTransaction().commit();
+		
+		return count;
+	}
+}

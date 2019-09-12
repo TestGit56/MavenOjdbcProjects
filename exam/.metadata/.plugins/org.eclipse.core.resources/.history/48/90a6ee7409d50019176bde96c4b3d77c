@@ -1,0 +1,55 @@
+package com.datageeks;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.FloatType;
+import org.hibernate.type.IntegerType;
+
+public class ProductDAO {
+
+	SessionFactory sessionFactory = HBUtil.getSessionFactory();
+	
+	public ProductBean getById(Integer productId) {
+		ProductBean product = null;
+		Session session = sessionFactory.openSession();
+		NativeQuery<ProductBean> query = session.createNativeQuery("select * from product where PID = :id", ProductBean.class);
+		query.setParameter("id", productId);
+		product = query.getSingleResult();
+		return product;
+	}
+	
+	public List<ProductBean> search(String productName) {
+		List<ProductBean> productList = null;
+		
+		Session session = sessionFactory.openSession();
+		NativeQuery<ProductBean> query = session.createNativeQuery("select * from product where upper(PNAME)  like :name", ProductBean.class);
+		query.setParameter("name", "%" + productName.trim().toUpperCase() + "%");
+		productList = query.getResultList();
+		
+		return productList;
+	}
+	
+	public Float getMaxPrice() {
+		Float maxprice = null;
+		
+		Session session = sessionFactory.openSession();
+		NativeQuery<Float> query = session.createNativeQuery("select max(PRICE)maxprice from product");
+		query.addScalar("maxprice",FloatType.INSTANCE);
+		maxprice = query.getSingleResult();
+		
+		return maxprice;
+	}
+	
+	public List<ProductBean> getAll(){
+		List<ProductBean> productList = null;
+		
+		Session session = sessionFactory.openSession();
+		NativeQuery<ProductBean> query = session.createNativeQuery("select * from product", ProductBean.class);
+		productList = query.getResultList();
+		
+		return productList;
+	}
+}

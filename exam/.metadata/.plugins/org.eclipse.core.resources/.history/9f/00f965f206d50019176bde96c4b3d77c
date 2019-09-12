@@ -1,0 +1,33 @@
+package com.datageeks;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.IntegerType;
+
+public class ProductDAO {
+
+	SessionFactory sessionFactory = HBUtil.getSessionFactory();
+	
+	public ProductBean getById(Integer productId) {
+		ProductBean product = null;
+		Session session = sessionFactory.openSession();
+		NativeQuery<ProductBean> query = session.createNativeQuery("select * from product where PID = :id", ProductBean.class);
+		query.setParameter("id", productId);
+		product = query.getSingleResult();
+		return product;
+	}
+	
+	public List<ProductBean> search(String productName) {
+		List<ProductBean> productList = null;
+		
+		Session session = sessionFactory.openSession();
+		NativeQuery<ProductBean> query = session.createNativeQuery("select * from product where upper(PNAME)  like :name", ProductBean.class);
+		query.setParameter("name", "%" + productName.trim().toUpperCase() + "%");
+		productList = query.getResultList();
+		
+		return productList;
+	}
+}

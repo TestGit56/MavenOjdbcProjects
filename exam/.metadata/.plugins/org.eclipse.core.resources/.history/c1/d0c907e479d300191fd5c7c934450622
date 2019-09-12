@@ -1,0 +1,18 @@
+package com.datageeks;
+
+public class RegularEmployee extends Employee {
+
+	private Float salary = null;
+	private Float bonus = null;
+	public RegularEmployee() {
+		super();
+	}
+	public RegularEmployee(Integer empId, String empName, Float salary, Float bonus) {
+		setEmpId(empId);
+		setEmpName(empName);
+		this.salary = salary;
+		this.bonus = bonus;
+	}
+	
+	
+}

@@ -1,0 +1,20 @@
+package com.datageeks;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.IntegerType;
+
+public class ProductDAO {
+
+	SessionFactory sessionFactory = HBUtil.getSessionFactory();
+	
+	public ProductBean getById(Integer productId) {
+		ProductBean product = null;
+		Session session = sessionFactory.openSession();
+		NativeQuery<ProductBean> query = session.createNativeQuery("select * from product where PID = :id", ProductBean.class);
+		query.setParameter("id", IntegerType.INSTANCE);
+		product = query.getSingleResult();
+		return product;
+	}
+}
